@@ -1,0 +1,67 @@
+{% extends "network/layout.html" %} 
+{% load static %}
+
+{% block body %} 
+    <h2>{{ user.username }}'s profile</h2>
+    {% if followed_by_me %}
+        <a href="#">Unfollow</a>
+    {% else %} 
+        <a href="#">Follow</a>
+    {% endif %}
+    <ul>
+        <li class="nav-btn" id="followers">Followers</li>
+        <li class="nav-btn" id="following">Following</li>
+        <li class="nav-btn" id="liked">Liked</li>
+    </ul>
+
+    <section>
+        <div class="container">
+            <div id="post-section" class="posts">
+                <h2>{{ user.username }}'s posts</h2>
+                {% for post, liked in posts %}
+                    <div class="mb-3 post-card" data-post-id="{{ post.id }}">
+                        <a href="{% url 'profile' user.id %}"><strong>{{ post.poster }}</strong></a>
+                        <p class="post-content">{{ post.content }}</p>
+                        <small class="text-muted">{{ post.timestamp }}</small>
+                        <img class="like-icon" src="{% static 'network/media/thumbs_up.png' %}" alt=""><span class="num-likes">{{ post.numLikes }}</span>
+                        {% if liked %}
+                            <span class="is-liked">Liked</span>
+                        {% else %}
+                            <span class="is-liked">Not Liked</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="followers-section">
+                {% for person in followers %}
+                    <a href="{% url 'profile' person.id %}"><strong>{{ person.username }}</strong></a>
+                {% endfor %}
+            </div>
+            <div id="following-section">
+                {% for person in following %}
+                    <a href="{% url 'profile' person.id %}"><strong>{{ person.username }}</strong></a>
+                {% endfor %}
+            </div>
+            <div id="liked-section">
+                <h2>{{ user.username }}'s liked posts</h2>
+                {% for user_like, me_like in user_likes %}
+                    <div class="mb-3 post-card" data-post-id="{{ user_like.post.id }}">
+                        <a href="{% url 'profile' user_like.post.poster.id %}"><strong>{{ user_like.post.poster.username }}</strong></a>
+                        <p class="post-content">{{ user_like.post.content }}</p>
+                        <small class="text-muted">{{ user_like.post.timestamp }}</small>
+                        <img class="like-icon" src="{% static 'network/media/thumbs_up.png' %}" alt=""><span class="num-likes">{{ user_like.post.numLikes }}</span>
+                        {% if me_like %}
+                            <span class="is-liked">Liked</span>
+                        {% else %}
+                            <span class="is-liked">Not Liked</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block head %} 
+    <script src="{% static 'network/script.js' %}"></script>
+{% endblock %}
